@@ -16,6 +16,7 @@ import AppTheme from './shared-theme/AppTheme';
 import ColorModeSelect from './shared-theme/customizations/ColorModeSelect';
 import { GoogleIcon, SitemarkIcon } from './CustomIcons';
 import { loginUser } from '../api/authApi';
+import { useNavigate } from 'react-router-dom';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -59,7 +60,11 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-export default function SignIn(props: { disableCustomTheme?: boolean }) {
+
+export default function SignIn(  props: {
+    disableCustomTheme?: boolean;
+    setIsLoggedIn: (value: boolean) => void;
+  }) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [emailError, setEmailError] = React.useState(false);
@@ -67,6 +72,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [backendError, setBackendError] = React.useState("");
+  let navigate = useNavigate();
 
   const validateInputs = () => {
     let isValid = true;
@@ -91,6 +97,8 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
 
     return isValid;
   };
+  
+  const { setIsLoggedIn } = props;
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -102,7 +110,8 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
 
       if (result.access_token) {
         localStorage.setItem("token", result.access_token);
-        alert("Logged in successfully!");
+        setIsLoggedIn(true); 
+        navigate('/products')
       } else {
         setBackendError(result.message || "Invalid credentials");
       }
