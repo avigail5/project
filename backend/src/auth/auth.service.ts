@@ -19,10 +19,6 @@ export class AuthService {
     const userExists = await this.usersService.findByUsername(dto.username);
     if (userExists) throw new UnauthorizedException('Username already exists');
 
-    // בדיקה אם האימייל קיים
-    const emailExists = await this.usersService.findByEmail(dto.email);
-    if (emailExists) throw new UnauthorizedException('Email already exists');
-
     // Hashing של הסיסמה
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
@@ -37,34 +33,27 @@ export class AuthService {
 
   // Login user
   async login(dto: LoginDto) {
-    // בחירת משתמש לפי username או email
-    let user;
-    if (dto.username) {
-      user = await this.usersService.findByUsername(dto.username);
-    } else if (dto.email) {
-      user = await this.usersService.findByEmail(dto.email);
-    } else {
-      throw new UnauthorizedException('Username or email required');
-    }
 
-    if (!user) throw new UnauthorizedException('Invalid credentials');
-
-    // בדיקה שה־password נשלח
-    if (!dto.password) {
-      throw new UnauthorizedException('Password is required');
-    }
-
-    // בדיקת סיסמה
-    const isPasswordValid = await bcrypt.compare(dto.password, user.password);
-    if (!isPasswordValid) throw new UnauthorizedException('Invalid credentials');
-
-    // יצירת JWT
-    const payload = { sub: user.id, username: user.username };
-    const token = this.jwtService.sign(payload);
-
-    return {
-      message: 'Logged in successfully',
-      access_token: token,
-    };
+  if (!dto.email) {
+    throw new UnauthorizedException('Email is required');
   }
+
+  const user = await this.usersService.findByEmail(dto.email);
+  if (!user) throw new UnauthorizedException('Invalid credentials');
+
+  if (!dto.password) {
+    throw new UnauthorizedException('Password is required');
+  }
+
+  const isPasswordValid = await bcrypt.compare(dto.password, user.password);
+  if (!isPasswordValid) throw new UnauthorizedException('Invalid credentials');
+
+  const payload = { sub: user.id, email: user.email };
+  const token = this.jwtService.sign(payload);
+
+  return {
+    message: 'Logged in successfully',
+    access_token: token,
+  };
+}
 }
