@@ -97,7 +97,7 @@ export default function SignIn(  props: {
 
     return isValid;
   };
-  
+
   const { setIsLoggedIn } = props;
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -110,6 +110,8 @@ export default function SignIn(  props: {
 
       if (result.access_token) {
         localStorage.setItem("token", result.access_token);
+        localStorage.setItem("user", JSON.stringify(result.user));
+        localStorage.setItem("userId", result.user.id);
         setIsLoggedIn(true); 
         navigate('/products')
       } else {

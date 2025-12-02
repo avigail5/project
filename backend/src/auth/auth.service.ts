@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { LoginResponseDto } from './dto/loginResponseDto';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +15,7 @@ export class AuthService {
   ) {}
 
   // Register new user
-  async register(dto: RegisterDto) {
+  async register(dto: RegisterDto){
     // בדיקה אם שם המשתמש קיים
     const userExists = await this.usersService.findByUsername(dto.username);
     if (userExists) throw new UnauthorizedException('Username already exists');
@@ -32,7 +33,7 @@ export class AuthService {
   }
 
   // Login user
-  async login(dto: LoginDto) {
+  async login(dto: LoginDto): Promise<LoginResponseDto>  {
 
   if (!dto.email) {
     throw new UnauthorizedException('Email is required');
@@ -54,6 +55,11 @@ export class AuthService {
   return {
     message: 'Logged in successfully',
     access_token: token,
+    user: {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+    },
   };
-}
+  }
 }

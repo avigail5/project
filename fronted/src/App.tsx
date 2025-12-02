@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import SignIn from "./pages/signIn";
 import SignUp from "./pages/signUp";
 import CustomImageList from "./pages/products";
+import CartPage from "./pages/cart";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
@@ -35,6 +36,7 @@ function App() {
           path="/products"
           element={isLoggedIn ? <CustomImageList /> : <Navigate to="/" />}
         />
+<Route path="/cart" element={<CartPage />} />
 
         {/* כל דף אחר */}
         <Route path="*" element={<Navigate to="/" />} />

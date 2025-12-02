@@ -1,11 +1,19 @@
+import React from "react";
+import type { ReactNode } from "react"; // שים לב ל-"type" כאן
 import { Outlet } from "react-router-dom";
 import ResponsiveAppBar from "../components/navbar";
 
-export default function Layout() {
+interface LayoutProps {
+  children?: ReactNode;
+}
+
+export default function Layout({ children }: LayoutProps) {
   return (
     <>
       <ResponsiveAppBar />
-      <Outlet />   {/* כאן יוצגו כל העמודים בהתאם ל־Route */}
+      <main>
+        {children ? children : <Outlet />}
+      </main>
     </>
   );
 }
