@@ -1,7 +1,7 @@
 import React from "react";
-import type { ReactNode } from "react"; // שים לב ל-"type" כאן
+import type { ReactNode } from "react";
 import { Outlet } from "react-router-dom";
-import ResponsiveAppBar from "../components/navbar";
+import AppNavbar from "../components/navbar";
 
 interface LayoutProps {
   children?: ReactNode;
@@ -10,7 +10,7 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   return (
     <>
-      <ResponsiveAppBar />
+      <AppNavbar />
       <main>
         {children ? children : <Outlet />}
       </main>

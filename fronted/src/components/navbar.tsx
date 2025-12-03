@@ -18,11 +18,11 @@ const pages = ['Products', 'Cart', 'Orders History'];
 const pageRoutes: any = {
 Products: "/products",
 Cart: "/cart",
-"Orders History": "/orders",
+"Orders History": "/orders",  
 };
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-function ResponsiveAppBar() {
+function AppNavbar() {
   const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -167,4 +167,4 @@ function ResponsiveAppBar() {
     </AppBar>
   );
 }
-export default ResponsiveAppBar;
+export default AppNavbar;

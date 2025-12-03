@@ -1,71 +1,54 @@
-// import { Injectable, NotFoundException } from '@nestjs/common';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { Repository } from 'typeorm';
-// import { Order } from './order.entity';
-// import { OrderItem } from './order-item.entity';
-// import { CartItem } from '../cart/cart.entity';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Order } from './order.entity';
+import { OrderItem } from './order-item.entity';
+import { CartItem } from '../cart/cart.entity';
+import { CreateOrderDto } from './dto/createOrderDto';
+import { Product } from 'src/products/product.entity';
+import { User } from 'src/users/user.entity';
 
-// @Injectable()
-// export class OrdersService {
-//   constructor(
-//     @InjectRepository(Order)
-//     private orderRepo: Repository<Order>,
-//     @InjectRepository(OrderItem)
-//     private orderItemRepo: Repository<OrderItem>,
-//     @InjectRepository(CartItem)
-//     private cartRepo: Repository<CartItem>,
-//   ) {}
+@Injectable()
+export class OrdersService {
+  constructor(
+    @InjectRepository(Order) private ordersRepo: Repository<Order>,
+    @InjectRepository(OrderItem) private orderItemsRepo: Repository<OrderItem>,
+    @InjectRepository(Product) private productsRepo: Repository<Product>,
+    @InjectRepository(User) private usersRepo: Repository<User>,
+    @InjectRepository(CartItem) private cartRepo: Repository<CartItem>,
+  ) {}
 
-//   async createOrder(user_id: number) {
-//     // 1. Get cart
-//     const cart = await this.cartRepo.find({
-//       where: { user_id },
-//       relations: ['product'],
-//     });
+  async createOrder(dto: CreateOrderDto) {
+    const user = await this.usersRepo.findOneBy({ id: dto.user_id });
+    if (!user) throw new Error('User not found');
 
-//     if (!cart.length) throw new NotFoundException('Cart is empty');
+    let totalPrice = 0;
+    const items: OrderItem[] = [];
 
-//     // 2. Calculate total
-//     const total = cart.reduce(
-//       (acc, item) => acc + Number(item.product.price) * item.quantity,
-//       0,
-//     );
+    for (const item of dto.items) {
+      const product = await this.productsRepo.findOneBy({ id: item.product_id });
+      if (!product) throw new Error(`Product ${item.product_id} not found`);
 
-//     // 3. Create order
-//     const order = await this.orderRepo.save({
-//       user_id,
-//       total_price: total,
-//     });
+      const orderItem = this.orderItemsRepo.create({
+        product,
+        quantity: item.quantity,
+        price_each: product.price,
+      });
 
-//     // 4. Create order items
-//     const orderItems = cart.map((c) =>
-//       this.orderItemRepo.create({
-//         order_id: order.id,
-//         product_id: c.product_id,
-//         quantity: c.quantity,
-//         price_each: c.product.price,
-//       }),
-//     );
+      totalPrice += product.price * item.quantity;
+      items.push(orderItem);
+    }
 
-//     await this.orderItemRepo.save(orderItems);
+    const order = this.ordersRepo.create({ user, total_price: totalPrice, items });
+      await this.cartRepo.delete({ user: { id: dto.user_id } });
+    return this.ordersRepo.save(order);
+  }
 
-//     // 5. Empty cart
-//     await this.cartRepo.delete({ user_id });
-
-//     return order;
-//   }
-
-//   getUserOrders(user_id: number) {
-//     return this.orderRepo.find({
-//       where: { user_id },
-//       relations: ['items', 'items.product'],
-//     });
-//   }
-
-//   getOrderById(id: number) {
-//     return this.orderRepo.findOne({
-//       where: { id },
-//       relations: ['items', 'items.product'],
-//     });
-//   }
-// }
+  async getOrdersByUser(user_id: number) {
+    return this.ordersRepo.find({
+      where: { user: { id: user_id } },
+      relations: ['items', 'items.product'],
+      order: { id: 'DESC' },
+    });
+  }
+}

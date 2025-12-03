@@ -4,11 +4,12 @@ import SignIn from "./pages/signIn";
 import SignUp from "./pages/signUp";
 import CustomImageList from "./pages/products";
 import CartPage from "./pages/cart";
+import OrdersPage from "./pages/orders";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
-  // נעדכן סטייט בכל שינוי ב-localStorage (למשל בהתחברות)
+  // עדכון סטייט בכל שינוי ב-localStorage (למשל בהתחברות)
   useEffect(() => {
     const handleStorageChange = () => {
       setIsLoggedIn(!!localStorage.getItem("token"));
@@ -21,24 +22,15 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* אם נכנסים ל-root → הפניה לפי מצב התחברות */}
         <Route path="/" element={isLoggedIn ?  (
       <Navigate to="/products" />
     ) : (
       <SignIn setIsLoggedIn={setIsLoggedIn} disableCustomTheme={false} />
     )} />
-
-        {/* דף הרשמה */}
         <Route path="/signUp" element={isLoggedIn ? <Navigate to="/products" /> : <SignUp />} />
-
-        {/* דף מוצרים */}
-        <Route
-          path="/products"
-          element={isLoggedIn ? <CustomImageList /> : <Navigate to="/" />}
-        />
-<Route path="/cart" element={<CartPage />} />
-
-        {/* כל דף אחר */}
+        <Route path="/products" element={isLoggedIn ? <CustomImageList /> : <Navigate to="/" />}
+        /><Route path="/cart" element={<CartPage />} />
+        <Route path="/orders" element={<OrdersPage />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>

@@ -1,29 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Order } from './order.entity';
 import { Product } from '../products/product.entity';
 
-@Entity({ schema: 'htl', name: 'order_items' })
+@Entity({ name: 'order_items' })
 export class OrderItem {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  order_id: number;
+  @ManyToOne(() => Order, (order) => order.items, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'order_id' })
+  order: Order;
 
-  @Column()
-  product_id: number;
+  @ManyToOne(() => Product, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'product_id' })
+  product: Product;
 
-  @Column({ default: 1 })
+  @Column({ type: 'int', default: 1 })
   quantity: number;
 
   @Column({ type: 'numeric', precision: 10, scale: 2 })
   price_each: number;
-
-  @ManyToOne(() => Order, (order) => order.orderItems, { onDelete: 'CASCADE' })
-  order: Order;
-
-  @ManyToOne(() => Product, (product) => product.orderItems, {
-    onDelete: 'CASCADE',
-  })
-  product: Product;
 }

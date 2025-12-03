@@ -20,7 +20,6 @@ export default function CustomImageList() {
 const [products, setProducts] = useState<any[]>([]);
 const [userId, setUserId] = useState<number | null>(null);
 
-// קריאת userId מ-localStorage בצורה נכונה
 useEffect(() => {
 const userString = localStorage.getItem("user");
 if (userString) {

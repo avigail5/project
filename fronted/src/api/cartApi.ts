@@ -50,15 +50,21 @@ export async function removeCartItem(cartItemId: number) {
   return response.json();
 }
 
-export async function checkout(userId: number) {
-  const response = await fetch(`http://localhost:3000/orders/${userId}`, {
+export async function checkout(userId: number, cartItems: any[]) {
+  const items = cartItems.map(item => ({
+    product_id: item.product.id,
+    quantity: item.quantity,
+  }));
+
+  const response = await fetch(`http://localhost:3000/orders`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      user_id: userId,
+      items,
+    }),
   });
 
-  if (!response.ok) {
-    throw new Error('Failed to checkout');
-  }
-
+  if (!response.ok) throw new Error("Failed to place order");
   return response.json();
 }

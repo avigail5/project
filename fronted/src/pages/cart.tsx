@@ -22,7 +22,6 @@ export default function CartPage() {
   const loadCart = () => {
     if (!userId) return;
 
-    console.log("works");
     getCart(userId)
       .then((data) => setCart(data))
       .catch(() => alert("Failed to load cart"));
@@ -54,7 +53,7 @@ export default function CartPage() {
 
   const handleCheckout = async () => {
     try {
-      await checkout(userId);
+      await checkout(userId, cart);
       alert("Order completed!");
       setCart([]);
     } catch {
@@ -139,7 +138,7 @@ export default function CartPage() {
               }}
             >
               <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                Total: ${totalPrice.toFixed(2)}
+                Total: ${totalPrice}
               </Typography>
 
               <Button

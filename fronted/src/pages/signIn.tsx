@@ -17,6 +17,8 @@ import ColorModeSelect from './shared-theme/customizations/ColorModeSelect';
 import { GoogleIcon, SitemarkIcon } from './CustomIcons';
 import { loginUser } from '../api/authApi';
 import { useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
+import { useGoogleLogin } from "@react-oauth/google";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -122,6 +124,16 @@ export default function SignIn(  props: {
     }
   };
 
+  //כניסה עם גוגל
+  const login = useGoogleLogin({
+  onSuccess: tokenResponse => {
+    console.log(tokenResponse);
+    setIsLoggedIn(true); 
+    navigate('/products')
+  },
+  onError: () => console.log("Login Failed"),
+});
+
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
@@ -188,9 +200,9 @@ export default function SignIn(  props: {
             <Button
               fullWidth
               variant="outlined"
-              onClick={() => alert('Sign in with Google')}
+              onClick={() => login()}
               startIcon={<GoogleIcon />}
-            >
+            >`  `
               Sign in with Google
             </Button>
             <Typography sx={{ textAlign: 'center' }}>
