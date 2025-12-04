@@ -5,6 +5,8 @@ import SignUp from "./pages/signUp";
 import CustomImageList from "./pages/products";
 import CartPage from "./pages/cart";
 import OrdersPage from "./pages/orders";
+import AppNavbar from "./components/navbar";
+import Layout from "./pages/Layout";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
@@ -20,18 +22,19 @@ function App() {
   }, []);
 
   return (
+    
     <Router>
       <Routes>
-        <Route path="/" element={isLoggedIn ?  (
-      <Navigate to="/products" />
-    ) : (
+        <Route path="/" element={isLoggedIn ? (<Navigate to="/products" />) : (
       <SignIn setIsLoggedIn={setIsLoggedIn} disableCustomTheme={false} />
     )} />
         <Route path="/signUp" element={isLoggedIn ? <Navigate to="/products" /> : <SignUp />} />
-        <Route path="/products" element={isLoggedIn ? <CustomImageList /> : <Navigate to="/" />}
-        /><Route path="/cart" element={<CartPage />} />
-        <Route path="/orders" element={<OrdersPage />} />
+        <Route element={<Layout setIsLoggedIn={setIsLoggedIn} />}>
+        <Route path="/products" element={isLoggedIn ? <CustomImageList /> : <Navigate to="/" />} />
+        <Route path="/cart" element={isLoggedIn ? <CartPage /> : <Navigate to="/" />} />
+        <Route path="/orders" element={isLoggedIn ? <OrdersPage /> : <Navigate to="/" />} />
         <Route path="*" element={<Navigate to="/" />} />
+        </Route>
       </Routes>
     </Router>
   );

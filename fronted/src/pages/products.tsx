@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import Layout from "./Layout";
 import { addToCart } from "../api/cartApi";
 import { getAllProducts } from "../api/productsApi";
+import { InputBase } from "@mui/material";
 
 function srcset(image: string, width: number, height: number, rows = 1, cols = 1) {
 return {
@@ -19,6 +20,8 @@ srcSet: `${image}?w=${width * cols}&h=${height * rows}&fit=crop&auto=format&dpr=
 export default function CustomImageList() {
 const [products, setProducts] = useState<any[]>([]);
 const [userId, setUserId] = useState<number | null>(null);
+const [searchInput, setSearchInput] = useState('');
+const [filteredProducts, setFilteredProducts] =useState<any[]>([]);
 
 useEffect(() => {
 const userString = localStorage.getItem("user");
@@ -38,9 +41,19 @@ console.log("No user found in localStorage");
 // משיכת כל המוצרים
 useEffect(() => {
 getAllProducts()
-.then(setProducts)
+.then((data) => {
+      setProducts(data);
+      setFilteredProducts(data);})
 .catch((err) => console.error(err));
 }, []);
+
+const handleSearch = (value: string) => {
+  setSearchInput(value);
+  const filtered = products.filter((product) =>
+    product.name.toLowerCase().includes(value.toLowerCase())
+  );
+  setFilteredProducts(filtered);
+};
 
 // פונקציה להוספה לעגלה
 const handleAddToCart = async (productId: number) => {
@@ -59,16 +72,27 @@ try {
 
 };
 
-return ( <Layout>
+return ( 
+  
 <Box
 sx={{
 display: "flex",
 justifyContent: "center",
+flexDirection: "column",
 width: "100vw",
 overflowX: "auto",
 padding: 2,
 }}
 >
+<div style={{ marginBottom: '20px' ,display: "flex" ,justifyContent: "center"}}>
+                <input
+    type="text"
+    placeholder="Search product..."
+    value={searchInput}
+    onChange={(e) => handleSearch(e.target.value)}
+    style={{ padding: '10px', width: '300px' }}
+                />
+            </div>
 <ImageList
 sx={{
 width: "100%",
@@ -79,7 +103,7 @@ rowHeight={250}
 gap={16}
 cols={3}
 >
-{products.map((item) => (
+{filteredProducts.map((item) => (
 <ImageListItem key={item.id} sx={{ position: "relative" }}>
 <img
 {...srcset(item.image_url, 350, 250)}
@@ -118,6 +142,6 @@ borderRadius: "8px",
 }}
 onClick={() => handleAddToCart(item.id)}
 > <AddIcon /> </IconButton> </Box> </Box> </ImageListItem>
-))} </ImageList> </Box> </Layout>
+))} </ImageList> </Box>
 );
 }

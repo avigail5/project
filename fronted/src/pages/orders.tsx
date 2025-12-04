@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { getOrdersByUser, createOrder } from "../api/ordersApi";
-import Layout from "./Layout";
 import {
   Box,
   Card,
@@ -29,7 +28,7 @@ export default function OrdersPage() {
   }, []);
 
   return (
-    <Layout>
+    <>
       <Box sx={{
     width: "100%", minHeight: "100vh", paddingX: 4, paddingY: 2}}>
         <Typography variant="h4" sx={{ mb: 3, fontWeight: "bold" }}>
@@ -59,6 +58,10 @@ export default function OrdersPage() {
         <Typography sx={{ color: "gray" }}>
           Status: {order.status || "Pending"}
         </Typography>
+
+        <Typography sx={{ color: "gray" }}>
+          created at: {order.createdAt || "Pending"}
+        </Typography>
       </Box>
 
       <Box sx={{ textAlign: "right" }}>
@@ -77,6 +80,6 @@ export default function OrdersPage() {
           </>
         )}
       </Box>
-    </Layout>
+    </>
   );
 }

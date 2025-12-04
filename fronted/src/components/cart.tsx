@@ -82,7 +82,7 @@ export default function Cart() {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       const userId = user.id;
 
-      await checkout(userId);
+      await checkout(userId, cartItems);
       alert('Order placed successfully!');
       setCartItems([]);
     } catch (err) {

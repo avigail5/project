@@ -5,12 +5,13 @@ import AppNavbar from "../components/navbar";
 
 interface LayoutProps {
   children?: ReactNode;
+  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({ children, setIsLoggedIn }: LayoutProps) {
   return (
     <>
-      <AppNavbar />
+       <AppNavbar setIsLoggedIn={setIsLoggedIn} />
       <main>
         {children ? children : <Outlet />}
       </main>

@@ -202,8 +202,7 @@ export default function SignIn(  props: {
               variant="outlined"
               onClick={() => login()}
               startIcon={<GoogleIcon />}
-            >`  `
-              Sign in with Google
+            >Sign in with Google
             </Button>
             <Typography sx={{ textAlign: 'center' }}>
               Don't have an account?{' '}

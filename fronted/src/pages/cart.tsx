@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { getCart, updateCartItem, removeCartItem, checkout } from "../api/cartApi";
-import Layout from "./Layout";
 import {
   Box,
   Card,
@@ -67,7 +66,7 @@ export default function CartPage() {
   );
 
   return (
-    <Layout>
+    <>
       <Box sx={{
     width: "100%", minHeight: "100vh", paddingX: 4, paddingY: 2}}>
         <Typography variant="h4" sx={{ mb: 3, fontWeight: "bold" }}>
@@ -153,6 +152,6 @@ export default function CartPage() {
           </>
         )}
       </Box>
-    </Layout>
+    </>
   );
 }

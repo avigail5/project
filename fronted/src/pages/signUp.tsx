@@ -17,6 +17,7 @@ import AppTheme from './shared-theme/AppTheme';
 import ColorModeSelect from './shared-theme/customizations/ColorModeSelect';
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
 import { registerUser } from "../api/authApi";
+import { useNavigate } from 'react-router-dom';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -108,6 +109,8 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
     return isValid;
   };
 
+let navigate = useNavigate();
+
 const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
   event.preventDefault();
 
@@ -120,7 +123,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     email: data.get("email") as string,
     password: data.get("password") as string,
   });
-
+  alert ("successfully registered");
   console.log("Server response:", result);
 };
 

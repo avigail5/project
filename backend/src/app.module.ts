@@ -12,6 +12,7 @@ import { OrdersModule } from './orders/orders.module';
     ConfigModule.forRoot({ isGlobal: true }), // load .env globally
     TypeOrmModule.forRoot({
       type: 'postgres',
+      schema: 'htl',
       host: process.env.DATABASE_HOST,
       port: parseInt(process.env.POSTGRES_PORT || '5432', 10),
       username: process.env.POSTGRES_USER,

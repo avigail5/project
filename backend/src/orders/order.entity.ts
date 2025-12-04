@@ -14,6 +14,9 @@ export class Order {
   @Column({ type: 'numeric', precision: 10, scale: 2, default: 0 })
   total_price: number;
 
+ @Column({ type: 'date', default: () => 'CURRENT_DATE' })
+  createdAt: Date;
+
   @Column({ default: 'pending' })
   status: string;
 

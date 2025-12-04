@@ -13,6 +13,11 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { useNavigate } from 'react-router-dom';
+import { alpha, InputBase, styled } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import { useEffect, useState } from 'react';
+import { getAllProducts } from '../api/productsApi';
+import axios from 'axios';
 
 const pages = ['Products', 'Cart', 'Orders History'];
 const pageRoutes: any = {
@@ -20,13 +25,16 @@ Products: "/products",
 Cart: "/cart",
 "Orders History": "/orders",  
 };
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-function AppNavbar() {
+interface NavbarProps {
+  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+function AppNavbar({ setIsLoggedIn }: NavbarProps) {
   const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-
+  
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -41,6 +49,12 @@ function AppNavbar() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const handleLogout = () => {
+        localStorage.clear(); 
+        setIsLoggedIn(false);
+        navigate('/login');
+      };
 
   return (
     <AppBar position="static">
@@ -130,7 +144,6 @@ function AppNavbar() {
 >
   {page}
 </Button>
-
             ))}
           </Box>
           <Box sx={{ flexGrow: 0 }}>
@@ -155,11 +168,9 @@ function AppNavbar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
-                </MenuItem>
-              ))}
+              <Button onClick={handleLogout}>
+                  <Typography sx={{ textAlign: 'center' }}>Logout</Typography>
+              </Button>
             </Menu>
           </Box>
         </Toolbar>
