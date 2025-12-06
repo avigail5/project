@@ -1,24 +1,15 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import CssBaseline from '@mui/material/CssBaseline';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormLabel from '@mui/material/FormLabel';
-import FormControl from '@mui/material/FormControl';
-import Link from '@mui/material/Link';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
-import MuiCard from '@mui/material/Card';
+import { useNavigate } from "react-router-dom";
+import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
+import { loginUser } from '../api/authApi';
+import {
+  Box, Button, Checkbox, CssBaseline, FormControl, FormControlLabel,
+  FormLabel, Link, Stack, TextField, Typography, Card as MuiCard
+} from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AppTheme from './shared-theme/AppTheme';
 import ColorModeSelect from './shared-theme/customizations/ColorModeSelect';
 import { GoogleIcon, SitemarkIcon } from './CustomIcons';
-import { loginUser } from '../api/authApi';
-import { useNavigate } from 'react-router-dom';
-import { GoogleLogin } from '@react-oauth/google';
-import { useGoogleLogin } from "@react-oauth/google";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -30,43 +21,19 @@ const Card = styled(MuiCard)(({ theme }) => ({
   margin: 'auto',
   boxShadow:
     'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
-  [theme.breakpoints.up('sm')]: {
-    maxWidth: '450px',
-  },
-  ...theme.applyStyles('dark', {
-    boxShadow:
-      'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
-  }),
+  [theme.breakpoints.up('sm')]: { maxWidth: '450px' },
 }));
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
-  height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
-  minHeight: '100%',
+  height: '100vh',
   padding: theme.spacing(2),
-  [theme.breakpoints.up('sm')]: {
-    padding: theme.spacing(4),
-  },
-  '&::before': {
-    content: '""',
-    display: 'block',
-    position: 'absolute',
-    zIndex: -1,
-    inset: 0,
-    backgroundImage:
-      'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
-    backgroundRepeat: 'no-repeat',
-    ...theme.applyStyles('dark', {
-      backgroundImage:
-        'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
-    }),
-  },
+  [theme.breakpoints.up('sm')]: { padding: theme.spacing(4) },
 }));
 
-
-export default function SignIn(  props: {
-    disableCustomTheme?: boolean;
-    setIsLoggedIn: (value: boolean) => void;
-  }) {
+export default function SignIn(props: { disableCustomTheme?: boolean;
+  setIsLoggedIn: (value: boolean) => void;
+}) {
+  const { setIsLoggedIn } = props;
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [emailError, setEmailError] = React.useState(false);
@@ -74,33 +41,26 @@ export default function SignIn(  props: {
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [backendError, setBackendError] = React.useState("");
-  let navigate = useNavigate();
+  const [rememberMe, setRememberMe] = React.useState(false);
+
+  const navigate = useNavigate();
 
   const validateInputs = () => {
     let isValid = true;
-
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setEmailError(true);
       setEmailErrorMessage("Please enter a valid email address.");
       isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage("");
-    }
+    } else { setEmailError(false); setEmailErrorMessage(""); }
 
     if (!password || password.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage("Password must be at least 6 characters long.");
       isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage("");
-    }
+    } else { setPasswordError(false); setPasswordErrorMessage(""); }
 
     return isValid;
   };
-
-  const { setIsLoggedIn } = props;
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -108,14 +68,13 @@ export default function SignIn(  props: {
 
     try {
       const result = await loginUser({ email, password });
-      console.log(result);
-
       if (result.access_token) {
         localStorage.setItem("token", result.access_token);
         localStorage.setItem("user", JSON.stringify(result.user));
-        localStorage.setItem("userId", result.user.id);
-        setIsLoggedIn(true); 
-        navigate('/products')
+        const expireTime = new Date().getTime() + (rememberMe ? 7*24*60*60*1000 : 60*60*1000);
+        localStorage.setItem("expireTime", expireTime.toString());
+        setIsLoggedIn(true);
+        navigate('/products');
       } else {
         setBackendError(result.message || "Invalid credentials");
       }
@@ -124,97 +83,54 @@ export default function SignIn(  props: {
     }
   };
 
-  //כניסה עם גוגל
   const login = useGoogleLogin({
-  onSuccess: tokenResponse => {
-    console.log(tokenResponse);
-    setIsLoggedIn(true); 
-    navigate('/products')
-  },
-  onError: () => console.log("Login Failed"),
-});
+    onSuccess: tokenResponse => {
+      console.log(tokenResponse);
+      localStorage.setItem("token", tokenResponse.access_token);
+      setIsLoggedIn(true);
+      navigate('/products');
+    },
+    onError: () => console.log("Google login failed"),
+  });
 
   return (
-    <AppTheme {...props}>
-      <CssBaseline enableColorScheme />
-      <SignInContainer direction="column" justifyContent="space-between">
+    <AppTheme>
+      <CssBaseline />
+      <SignInContainer direction="column" justifyContent="center">
         <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         <Card variant="outlined">
           <SitemarkIcon />
-          <Typography
-            component="h1"
-            variant="h4"
-            sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
-          >
-            Sign in
-          </Typography>
+          <Typography component="h1" variant="h4">Sign in</Typography>
           {backendError && <Typography color="error">{backendError}</Typography>}
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 2 }}
-          >
+
+          <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <FormControl>
               <FormLabel htmlFor="email">Email</FormLabel>
               <TextField
-                required
-                fullWidth
-                id="email"
-                type="email"
-                placeholder="your@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                error={emailError}
-                helperText={emailErrorMessage}
-                color={emailError ? "error" : "primary"}
+                required fullWidth type="email" value={email} onChange={e => setEmail(e.target.value)}
+                error={emailError} helperText={emailErrorMessage}
               />
             </FormControl>
             <FormControl>
               <FormLabel htmlFor="password">Password</FormLabel>
               <TextField
-                required
-                fullWidth
-                id="password"
-                type="password"
-                placeholder="••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                color={passwordError ? "error" : "primary"}
+                required fullWidth type="password" value={password} onChange={e => setPassword(e.target.value)}
+                error={passwordError} helperText={passwordErrorMessage}
               />
             </FormControl>
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-            >
-              Sign in
-            </Button>
+            <FormControlLabel control={<Checkbox value="remember" color="primary" 
+            onChange={e => setRememberMe(e.target.checked)} />} label="Remember me" />
+            <Button type="submit" fullWidth variant="contained">Sign in</Button>
           </Box>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => login()}
-              startIcon={<GoogleIcon />}
-            >Sign in with Google
-            </Button>
-            <Typography sx={{ textAlign: 'center' }}>
-              Don't have an account?{' '}
-              <Link
-                href="/signUp/"
-                variant="body2"
-                sx={{ alignSelf: 'center' }}
-              >
-                Sign up
-              </Link>
-            </Typography>
-          </Box>
+
+          <Button fullWidth variant="outlined" startIcon={<GoogleIcon />} onClick={() => login()}>
+            Sign in with Google
+          </Button>
+
+          <Typography sx={{ textAlign: 'center', mt: 2 }}>
+            Don't have an account?{' '}
+            <Link href="/signUp/" variant="body2">Sign up</Link>
+          </Typography>
         </Card>
       </SignInContainer>
     </AppTheme>

@@ -6,6 +6,7 @@ import { UsersService } from 'src/users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { LoginResponseDto } from './dto/loginResponseDto';
+import { User } from 'src/users/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -61,5 +62,31 @@ export class AuthService {
       email: user.email,
     },
   };
+  }
+
+async validateOrCreateGoogleUser(userData: { email: string, username: string, accessToken: string }) {
+  let user = await this.usersService.findByEmail(userData.email);
+
+  if (!user) {
+    user = await this.usersService.createUser({
+      email: userData.email,
+      username: userData.username,
+      password: ' ',
+    });
+  }
+
+  return this.loginWithGoogle(user);
+}
+
+  loginWithGoogle(user: User) {
+    const payload = { email: user.email, sub: user.id };
+    return {
+      access_token: this.jwtService.sign(payload),
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+      },
+    };
   }
 }

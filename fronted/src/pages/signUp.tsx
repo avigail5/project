@@ -16,8 +16,9 @@ import { styled } from '@mui/material/styles';
 import AppTheme from './shared-theme/AppTheme';
 import ColorModeSelect from './shared-theme/customizations/ColorModeSelect';
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
-import { registerUser } from "../api/authApi";
+import { redirectToGoogleLogin, registerUser } from "../api/authApi";
 import { useNavigate } from 'react-router-dom';
+import { useGoogleLogin } from "@react-oauth/google";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -61,7 +62,11 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-export default function SignUp(props: { disableCustomTheme?: boolean }) {
+export default function SignUp(props: { disableCustomTheme?: boolean;
+  setIsLoggedIn: (value: boolean) => void;
+}) {
+  const { setIsLoggedIn } = props;
+
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
@@ -126,6 +131,17 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
   alert ("successfully registered");
   console.log("Server response:", result);
 };
+
+
+const googleLogin = useGoogleLogin({
+  onSuccess: tokenResponse => {
+    console.log("Google token response:", tokenResponse);
+    localStorage.setItem("token", tokenResponse.access_token); // שמירת הטוקן
+    setIsLoggedIn(true); // עדכון סטייט ההתחברות
+    navigate('/products'); // מעבר לדף המוצרים
+  },
+  onError: () => console.log("Google login failed"),
+});
 
   return (
     <AppTheme {...props}>
@@ -197,15 +213,6 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
                 color={passwordError ? 'error' : 'primary'}
               />
             </FormControl>
-
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              onClick={validateInputs}
-            >
-              Sign up
-            </Button>
           </Box>
 
           <Divider>
@@ -213,13 +220,10 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           </Divider>
 
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => alert('Sign up with Google')}
-              startIcon={<GoogleIcon />}
-            >
-              Sign up with Google
+            <Button fullWidth variant="outlined" 
+            onClick={() => googleLogin()} 
+            startIcon={<GoogleIcon />}>
+               Sign up with Google
             </Button>
 
             <Typography sx={{ textAlign: 'center' }}>

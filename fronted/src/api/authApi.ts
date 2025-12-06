@@ -8,6 +8,10 @@ export async function loginUser(credentials: any) {
   return response.json();
 }
 
+export function redirectToGoogleLogin() {
+  window.location.href = "http://localhost:3000/auth/google";
+}
+
 export async function registerUser(data: {
   username: string;
   email: string;

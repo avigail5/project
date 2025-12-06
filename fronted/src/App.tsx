@@ -11,15 +11,28 @@ import Layout from "./pages/Layout";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
-  // עדכון סטייט בכל שינוי ב-localStorage (למשל בהתחברות)
-  useEffect(() => {
-    const handleStorageChange = () => {
-      setIsLoggedIn(!!localStorage.getItem("token"));
-    };
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  const expireTime = localStorage.getItem("expireTime");
 
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
+  if (!token) {
+    setIsLoggedIn(false);
+    return;
+  }
+
+  if (expireTime) {
+    const now = new Date().getTime();
+
+    if (now > Number(expireTime)) {
+      localStorage.clear();
+      setIsLoggedIn(false);
+      return;
+    }
+  }
+
+  setIsLoggedIn(true);
+}, []);
+
 
   return (
     
@@ -28,7 +41,7 @@ function App() {
         <Route path="/" element={isLoggedIn ? (<Navigate to="/products" />) : (
       <SignIn setIsLoggedIn={setIsLoggedIn} disableCustomTheme={false} />
     )} />
-        <Route path="/signUp" element={isLoggedIn ? <Navigate to="/products" /> : <SignUp />} />
+        <Route path="/signUp" element={isLoggedIn ? <Navigate to="/products" /> : <SignUp setIsLoggedIn={setIsLoggedIn} />} />
         <Route element={<Layout setIsLoggedIn={setIsLoggedIn} />}>
         <Route path="/products" element={isLoggedIn ? <CustomImageList /> : <Navigate to="/" />} />
         <Route path="/cart" element={isLoggedIn ? <CartPage /> : <Navigate to="/" />} />

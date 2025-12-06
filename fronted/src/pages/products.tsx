@@ -24,18 +24,24 @@ const [searchInput, setSearchInput] = useState('');
 const [filteredProducts, setFilteredProducts] =useState<any[]>([]);
 
 useEffect(() => {
-const userString = localStorage.getItem("user");
-if (userString) {
-try {
-const user = JSON.parse(userString);
-setUserId(user.id);
-console.log("User ID:", user.id);
-} catch (err) {
-console.error("Failed to parse user from localStorage", err);
-}
-} else {
-console.log("No user found in localStorage");
-}
+  // כניסה דרך גוגל
+  const params = new URLSearchParams(window.location.search);
+  const userParam = params.get("user");
+
+  if (userParam) {
+    const userString = localStorage.getItem("user");
+    if (userString) {
+      try {
+        const user = JSON.parse(userString);
+        setUserId(user.id);
+        console.log("User ID:", user.id);
+      } catch (err) {
+        console.error("Failed to parse user from localStorage", err);
+      }
+    }else {
+      console.log("No user found in localStorage");
+    }
+  }
 }, []);
 
 // משיכת כל המוצרים
