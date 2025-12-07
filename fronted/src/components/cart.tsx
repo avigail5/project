@@ -10,7 +10,7 @@ interface CartItem {
     name: string;
     description: string;
     price: number;
-    image_url: string;
+    imageUrl: string;
   };
 }
 
@@ -156,7 +156,7 @@ export default function Cart() {
               }}
             >
               <img
-                src={item.product.image_url}
+                src={item.product.imagerl}
                 alt={item.product.name}
                 style={{ width: '160px', height: '160px', objectFit: 'cover' }}
               />

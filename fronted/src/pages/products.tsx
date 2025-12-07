@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import Layout from "./Layout";
 import { addToCart } from "../api/cartApi";
 import { getAllProducts } from "../api/productsApi";
-import { InputBase } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 function srcset(image: string, width: number, height: number, rows = 1, cols = 1) {
 return {
@@ -32,22 +32,18 @@ const [isAdmin, setIsAdmin] = useState(false);
   }, []);
 
 useEffect(() => {
-  const params = new URLSearchParams(window.location.search);
-  const userParam = params.get("user");
+  const userString = localStorage.getItem("user");
 
-  if (userParam) {
-    const userString = localStorage.getItem("user");
-    if (userString) {
-      try {
-        const user = JSON.parse(userString);
-        setUserId(user.id);
-        console.log("User ID:", user.id);
-      } catch (err) {
-        console.error("Failed to parse user from localStorage", err);
-      }
-    }else {
-      console.log("No user found in localStorage");
+  if (userString) {
+    try {
+      const user = JSON.parse(userString);
+      setUserId(user.id);
+      console.log("User ID:", user.id);
+    } catch (err) {
+      console.error("Failed to parse user from localStorage", err);
     }
+  } else {
+    console.log("No user found in localStorage");
   }
 }, []);
 
@@ -127,6 +123,7 @@ padding: 2,
                 />
             </div>
 <ImageList
+
 sx={{
 width: "100%",
 maxWidth: "1200px",
@@ -139,7 +136,7 @@ cols={3}
 {filteredProducts.map((item) => (
 <ImageListItem key={item.id} sx={{ position: "relative" }}>
 <img
-{...srcset(item.image_url, 350, 250)}
+{...srcset(item.imageUrl, 350, 250)}
 alt={item.name}
 loading="lazy"
 style={{ width: "100%", height: "100%", objectFit: "cover" }}
@@ -159,6 +156,7 @@ padding: "8px",
 boxSizing: "border-box",
 }}
 >
+  
 <Box sx={{ color: "white", display: "flex", flexDirection: "column" }}>
 <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
 {item.name} </Typography> <Typography variant="caption">{item.description}</Typography> </Box>

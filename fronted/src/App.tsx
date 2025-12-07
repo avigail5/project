@@ -46,7 +46,7 @@ useEffect(() => {
         <Route path="/products" element={isLoggedIn ? <CustomImageList /> : <Navigate to="/" />} />
         <Route path="/cart" element={isLoggedIn ? <CartPage /> : <Navigate to="/" />} />
         <Route path="/orders" element={isLoggedIn ? <OrdersPage /> : <Navigate to="/" />} />
-        <Route path="/createProductForm" element={isLoggedIn ? <CreateProductForm /> : <Navigate to="/" />} />
+        <Route path="/add-product" element={isLoggedIn ? <CreateProductForm /> : <Navigate to="/" />} />
         <Route path="*" element={<Navigate to="/" />} />
         </Route>
       </Routes>

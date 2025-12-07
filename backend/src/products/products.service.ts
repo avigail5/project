@@ -27,4 +27,12 @@ export class ProductsService {
   const product = this.productsRepository.create(dto);
   return this.productsRepository.save(product);
 }
+
+ async remove(id: number) {
+    const product = await this.productsRepository.findOne({ where: { id: id } });
+    if (!product)
+      return "product not exists!"
+    await this.productsRepository.delete({id: id})
+    return "product Deleted Successfully";
+  }
 }

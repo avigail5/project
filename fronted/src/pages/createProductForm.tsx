@@ -29,6 +29,7 @@ export default function CreateProductForm() {
 try {
   const result = await createProduct(data);
   console.log("Product created:", result);
+  alert("product created")
 } catch (error) {
   console.error("Error creating product:", error);
 }  };

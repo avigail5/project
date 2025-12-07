@@ -16,6 +16,8 @@ const Card = styled(MuiCard)(({ theme }) => ({
   flexDirection: 'column',
   alignSelf: 'center',
   width: '100%',
+  justifyContent: "center",
+  alignItems: "center",
   padding: theme.spacing(4),
   gap: theme.spacing(2),
   margin: 'auto',
@@ -24,8 +26,12 @@ const Card = styled(MuiCard)(({ theme }) => ({
   [theme.breakpoints.up('sm')]: { maxWidth: '450px' },
 }));
 
-const SignInContainer = styled(Stack)(({ theme }) => ({
-  height: '100vh',
+const SignInContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'center', 
+  alignItems: 'center',    
+  height: '100vh',        
+  width: '100vw',            
   padding: theme.spacing(2),
   [theme.breakpoints.up('sm')]: { padding: theme.spacing(4) },
 }));
@@ -71,6 +77,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean;
       if (result.access_token) {
         localStorage.setItem("token", result.access_token);
         localStorage.setItem("user", JSON.stringify(result.user));
+        localStorage.setItem("userId", JSON.stringify(result.user.id));
         localStorage.setItem("is_admin", result.user.is_admin ? "true" : "false");
         const expireTime = new Date().getTime() + (rememberMe ? 7*24*60*60*1000 : 60*60*1000);
         localStorage.setItem("expireTime", expireTime.toString());
@@ -97,7 +104,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean;
   return (
     <AppTheme>
       <CssBaseline />
-      <SignInContainer direction="column" justifyContent="center">
+      <SignInContainer>
         <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         <Card variant="outlined">
           <SitemarkIcon />

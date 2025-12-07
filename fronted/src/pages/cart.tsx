@@ -84,7 +84,7 @@ export default function CartPage() {
               >
                 <CardMedia
                   component="img"
-                  image={item.product.image_url}
+                  image={item.product.imageUrl}
                   sx={{ width: 140, height: 140, objectFit: "cover" }}
                 />
 

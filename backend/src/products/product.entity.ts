@@ -17,7 +17,7 @@ export class Product {
   price: number;
 
   @Column({ type: 'text', nullable: true })
-  image_url: string;
+  imageUrl: string;
 
   @OneToMany(() => CartItem, (cartItem) => cartItem.product)
   cartItems: CartItem[];

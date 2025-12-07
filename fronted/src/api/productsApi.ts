@@ -18,7 +18,7 @@ export async function getProductById(productId: number) {
   return response.json();
 }
 
-export async function createProduct(data: any) {
+export async function createProduct(data: FormData) {
 
   const response = await fetch(`http://localhost:3000/products/create`, {
     method: 'POST',
