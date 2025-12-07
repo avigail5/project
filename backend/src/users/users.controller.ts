@@ -6,6 +6,12 @@ import { RegisterUserDto } from './dto/register-user.dto';
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
+  
+  @Get()
+  getAllUsers() {
+    return this.usersService.findAll();
+  }
+
   @Get(':username')
   getUser(@Param('username') username: string) {
     return this.usersService.findByUsername(username);

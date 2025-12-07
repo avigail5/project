@@ -7,7 +7,7 @@ import CartPage from "./pages/cart";
 import OrdersPage from "./pages/orders";
 import AppNavbar from "./components/navbar";
 import Layout from "./pages/Layout";
-
+import CreateProductForm from "./pages/createProductForm";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
@@ -46,6 +46,7 @@ useEffect(() => {
         <Route path="/products" element={isLoggedIn ? <CustomImageList /> : <Navigate to="/" />} />
         <Route path="/cart" element={isLoggedIn ? <CartPage /> : <Navigate to="/" />} />
         <Route path="/orders" element={isLoggedIn ? <OrdersPage /> : <Navigate to="/" />} />
+        <Route path="/createProductForm" element={isLoggedIn ? <CreateProductForm /> : <Navigate to="/" />} />
         <Route path="*" element={<Navigate to="/" />} />
         </Route>
       </Routes>

@@ -24,11 +24,7 @@ export class ProductsService {
   }
 
   createProduct(dto: CreateProductDto) {
-    const product = this.productsRepository.create({
-    ...dto,
-    description: dto.description ?? '',
-    image_url: dto.image_url ?? '',
-  });
+  const product = this.productsRepository.create(dto);
   return this.productsRepository.save(product);
 }
 }

@@ -71,6 +71,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean;
       if (result.access_token) {
         localStorage.setItem("token", result.access_token);
         localStorage.setItem("user", JSON.stringify(result.user));
+        localStorage.setItem("is_admin", result.user.is_admin ? "true" : "false");
         const expireTime = new Date().getTime() + (rememberMe ? 7*24*60*60*1000 : 60*60*1000);
         localStorage.setItem("expireTime", expireTime.toString());
         setIsLoggedIn(true);

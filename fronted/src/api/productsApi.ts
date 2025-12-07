@@ -17,3 +17,14 @@ export async function getProductById(productId: number) {
   
   return response.json();
 }
+
+export async function createProduct(data: any) {
+
+  const response = await fetch(`http://localhost:3000/products/create`, {
+    method: 'POST',
+    body: data,
+  });
+
+  if (!response.ok) throw new Error("Failed to add product");
+  return response.json();
+}

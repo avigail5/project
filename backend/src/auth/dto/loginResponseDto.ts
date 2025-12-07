@@ -6,5 +6,6 @@ export class LoginResponseDto {
     id: number;
     username: string;
     email: string;
+    is_admin: boolean;
   };
 }

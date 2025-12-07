@@ -16,6 +16,7 @@
     "@mui/material": "^7.3.5",
     "@react-oauth/google": "^0.12.2",
     "axios": "^1.13.2",
+    "components": "^0.1.0",
     "mui": "^0.0.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

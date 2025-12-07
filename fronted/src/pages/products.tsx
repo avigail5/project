@@ -22,9 +22,16 @@ const [products, setProducts] = useState<any[]>([]);
 const [userId, setUserId] = useState<number | null>(null);
 const [searchInput, setSearchInput] = useState('');
 const [filteredProducts, setFilteredProducts] =useState<any[]>([]);
+const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const adminFlag = localStorage.getItem("is_admin");
+    console.log(localStorage.getItem("is_admin"));
+    setIsAdmin(adminFlag === "true");
+    console.log(isAdmin);
+  }, []);
 
 useEffect(() => {
-  // כניסה דרך גוגל
   const params = new URLSearchParams(window.location.search);
   const userParam = params.get("user");
 
@@ -90,6 +97,26 @@ overflowX: "auto",
 padding: 2,
 }}
 >
+   {isAdmin && 
+   (
+        <Box sx={{ display: "flex", justifyContent: "flex-end", width: "100%", mb: 2 }}>
+          <button
+            onClick={() => window.location.href = "/add-product"}
+            style={{
+              padding: "10px 20px",
+              backgroundColor: "#1976d2",
+              color: "white",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer",
+              fontSize: "16px",
+              fontWeight: "bold"
+            }}
+          >
+            + Add Product
+          </button>
+        </Box>
+      )}
 <div style={{ marginBottom: '20px' ,display: "flex" ,justifyContent: "center"}}>
                 <input
     type="text"
