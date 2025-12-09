@@ -12,7 +12,7 @@ export default function Layout({ children, setIsLoggedIn }: LayoutProps) {
   return (
     <>
        <AppNavbar setIsLoggedIn={setIsLoggedIn} />
-      <main>
+      <main >
         {children ? children : <Outlet />}
       </main>
     </>

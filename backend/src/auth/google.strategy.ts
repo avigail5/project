@@ -30,7 +30,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       accessToken,
     };
 
-    // כאן אפשר לבדוק אם המשתמש כבר קיים או ליצור חדש
     const user = await this.authService.validateOrCreateGoogleUser(userData);
 
     done(null, user);

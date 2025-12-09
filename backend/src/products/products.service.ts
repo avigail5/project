@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './product.entity';
@@ -31,8 +31,8 @@ export class ProductsService {
  async remove(id: number) {
     const product = await this.productsRepository.findOne({ where: { id: id } });
     if (!product)
-      return "product not exists!"
+    throw new NotFoundException('Product not exists');
     await this.productsRepository.delete({id: id})
-    return "product Deleted Successfully";
+  return { message: 'Product Deleted Successfully' };
   }
 }

@@ -28,3 +28,13 @@ export async function createProduct(data: FormData) {
   if (!response.ok) throw new Error("Failed to add product");
   return response.json();
 }
+
+export async function deleteProduct(productId: number) {
+
+  const response = await fetch(`http://localhost:3000/products/${productId}`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) throw new Error("Failed to remove product");
+  return response.json();
+}

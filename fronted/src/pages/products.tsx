@@ -7,8 +7,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Layout from "./Layout";
 import { addToCart } from "../api/cartApi";
-import { getAllProducts } from "../api/productsApi";
-import DeleteIcon from '@mui/icons-material/Delete';
+import { deleteProduct, getAllProducts } from "../api/productsApi";
 
 function srcset(image: string, width: number, height: number, rows = 1, cols = 1) {
 return {
@@ -47,7 +46,7 @@ useEffect(() => {
   }
 }, []);
 
-// משיכת כל המוצרים
+// getting all the products
 useEffect(() => {
 getAllProducts()
 .then((data) => {
@@ -56,6 +55,7 @@ getAllProducts()
 .catch((err) => console.error(err));
 }, []);
 
+// search box function
 const handleSearch = (value: string) => {
   setSearchInput(value);
   const filtered = products.filter((product) =>
@@ -64,7 +64,7 @@ const handleSearch = (value: string) => {
   setFilteredProducts(filtered);
 };
 
-// פונקציה להוספה לעגלה
+// add to cart function
 const handleAddToCart = async (productId: number) => {
 if (!userId) {
 alert("Please sign in to add products to cart");
@@ -77,29 +77,42 @@ try {
 } catch (err) {
   console.error("Failed to add product to cart:", err);
   alert("Failed to add product to cart");
-}
-
+  }
 };
+
+ const handleRemove = async (id: number) => {
+    try {
+      const result = await deleteProduct(id);
+      setProducts((prev) => prev.filter((item) => item.id !== id));
+      setFilteredProducts((prev) => prev.filter((item) => item.id !== id));
+      console.log("Product removed:", result);
+      alert("product removed")
+    } catch (error) {
+      console.error("Error removing product:", error);
+    }  };
+
 
 return ( 
   
 <Box
 sx={{
+background: "#6acced",
 display: "flex",
 justifyContent: "center",
 flexDirection: "column",
 width: "100vw",
-overflowX: "auto",
+alignItems: "center",
+paddingTop: "80px",
 padding: 2,
 }}
 >
    {isAdmin && 
    (
-        <Box sx={{ display: "flex", justifyContent: "flex-end", width: "100%", mb: 2 }}>
+        <Box sx={{ paddingTop: "80px", display: "flex", justifyContent: "flex-end", width: "100%", mb: 2 }}>
           <button
             onClick={() => window.location.href = "/add-product"}
             style={{
-              padding: "10px 20px",
+              padding: "20px 20px",
               backgroundColor: "#1976d2",
               color: "white",
               border: "none",
@@ -113,7 +126,7 @@ padding: 2,
           </button>
         </Box>
       )}
-<div style={{ marginBottom: '20px' ,display: "flex" ,justifyContent: "center"}}>
+<div style={{ paddingTop: "80px", marginBottom: '20px' ,display: "flex" ,justifyContent: "center"}}>
                 <input
     type="text"
     placeholder="Search product..."
@@ -159,7 +172,12 @@ boxSizing: "border-box",
   
 <Box sx={{ color: "white", display: "flex", flexDirection: "column" }}>
 <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-{item.name} </Typography> <Typography variant="caption">{item.description}</Typography> </Box>
+{item.name} </Typography> <Typography variant="caption">{item.description}</Typography> 
+ {isAdmin && 
+   (
+ <button style={{background: "red", position: "static", top: '10px', right: '10px' }} onClick={() => handleRemove(item.id)}>REMOVE ITEM</button>
+ )}
+ </Box>
 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
 <Typography variant="subtitle2" sx={{ color: "white", fontWeight: "bold" }}>
 ${item.price} </Typography>

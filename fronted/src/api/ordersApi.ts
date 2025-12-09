@@ -26,3 +26,9 @@ export async function getOrdersByUser(userId: number) {
 
   return response.json();
 }
+
+export async function getAllOrders() {
+  const res = await fetch("http://localhost:3000/orders");
+  if (!res.ok) throw new Error("Failed to load orders");
+  return res.json();
+}

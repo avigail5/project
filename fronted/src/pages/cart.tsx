@@ -66,9 +66,9 @@ export default function CartPage() {
   );
 
   return (
-    <>
+    <div style={{background: "#6acced", width: "100%", height: "100%", paddingTop: "80px"}}>
       <Box sx={{
-    width: "100%", minHeight: "100vh", paddingX: 4, paddingY: 2}}>
+          width: "100%", minHeight: "100vh", paddingX: 4, paddingY: 2, paddingTop: "80px"}}>
         <Typography variant="h4" sx={{ mb: 3, fontWeight: "bold" }}>
           Shopping Cart
         </Typography>
@@ -80,7 +80,7 @@ export default function CartPage() {
             {cart.map((item) => (
               <Card
                 key={item.id}
-                sx={{ display: "flex", mb: 2, alignItems: "center" }}
+                sx={{ display: "flex", mb: 2, alignItems: "center"}}
               >
                 <CardMedia
                   component="img"
@@ -115,8 +115,6 @@ export default function CartPage() {
                     </IconButton>
                   </Box>
                 </CardContent>
-
-                {/* הסרה */}
                 <IconButton
                   sx={{ mr: 2 }}
                   onClick={() => handleRemoveItem(item.id)}
@@ -152,6 +150,7 @@ export default function CartPage() {
           </>
         )}
       </Box>
-    </>
+    </div>
   );
 }
+

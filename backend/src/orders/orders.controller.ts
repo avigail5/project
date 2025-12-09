@@ -15,4 +15,9 @@ export class OrdersController {
   async getOrdersByUser(@Param('user_id') user_id: number) {
     return this.ordersService.getOrdersByUser(user_id);
   }
+
+  @Get()
+  getOrders() {
+    return this.ordersService.findAll();
+  }
 }

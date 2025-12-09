@@ -1,4 +1,3 @@
-// src/auth/auth.service.ts
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
@@ -17,14 +16,10 @@ export class AuthService {
 
   // Register new user
   async register(dto: RegisterDto){
-    // בדיקה אם שם המשתמש קיים
     const userExists = await this.usersService.findByUsername(dto.username);
+    
     if (userExists) throw new UnauthorizedException('Username already exists');
-
-    // Hashing של הסיסמה
     const hashedPassword = await bcrypt.hash(dto.password, 10);
-
-    // יצירת המשתמש
     const newUser = await this.usersService.createUser({
       ...dto,
       password: hashedPassword,

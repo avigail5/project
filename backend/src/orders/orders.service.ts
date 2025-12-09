@@ -51,4 +51,21 @@ export class OrdersService {
       order: { id: 'DESC' },
     });
   }
+  
+ findAll(): Promise<Order[]> {
+  return this.ordersRepo.find({
+    relations: ['user'],
+    select: {
+      id: true,
+      total_price: true,
+      createdAt: true,
+      status: true,
+      user: {
+        id: true,
+      },
+    },
+  });
+}
+
+
 }

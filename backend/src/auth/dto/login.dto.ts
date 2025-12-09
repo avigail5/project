@@ -1,4 +1,4 @@
-import { IsString, IsOptional, MinLength, IsEmail } from 'class-validator';
+import { IsString, IsOptional, MinLength } from 'class-validator';
 
 export class LoginDto {
   @IsString()
@@ -6,6 +6,6 @@ export class LoginDto {
 
   @IsString()
   @MinLength(6)
-  @IsOptional()  // לא חובה אם מתחברים דרך Gmail
+  @IsOptional()
   password?: string;
 }
